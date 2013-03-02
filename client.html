@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html>
+    <body>
+        <h1>Welcome on the PartyLine!</h1>
+
+		<!-- Include the socket.io javascript on the client side -->
+		<script src="socket.io/socket.io.js"></script>
+		<script>
+		  // Establish the connection with the server
+		  var socket = io.connect('http://localhost:8080'); 
+		  // Create a new socket connection
+		  socket.on('connect', function() {
+			socket.emit('set nickname', prompt('What is your nickname?'));
+		  });
+		</script>
+    </body>
+</html>
