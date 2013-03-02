@@ -5,11 +5,16 @@
 
 		<!-- Include the socket.io javascript on the client side -->
 		<script src="socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 		<script>
-		  // Establish the connection with the server
-		  var socket = io.connect('http://localhost:8080'); 
-		  // Create a new socket connection
-		  socket.on('connect', function() {
+		  var socket = io.connect('http://localhost:8080');
+		  socket.on('broadcast_msg', function(data) {
+			console.log('Got broadcast_msg', data);
+			var msg = "<li>" + data + "</li>";
+			$('#broadcast-msg').append(msg);
+		  });
+		  socket.on('chat', function(data) {
+			console.log(data);
 			socket.emit('set nickname', prompt('What is your nickname?'));
 		  });
 		</script>
