@@ -2,6 +2,10 @@
 <html>
     <body>
         <h1>Welcome on the PartyLine!</h1>
+		<label for="msg-input">Broadcast message</label>
+		<input id="msg-input" name="msg-input" type="text" size="80" />
+		<p>Press enter to submit your message</p>
+		
 		<ul id="broadcast-msg"></ul>
 		<!-- Include the socket.io javascript on the client side -->
 		<script src="socket.io/socket.io.js"></script>
@@ -16,6 +20,13 @@
 		  socket.on('chat', function(data) {
 			console.log(data);
 			socket.emit('set nickname', prompt('What is your nickname?'));
+			$('#msg-input').change(function(){
+				var txt = $(this).val();
+				$this.val('');
+				socket.emit('emit_msg', txt, function(data){
+					console.log('Emit Broadcast msg ', data);
+				});
+			});
 		  });
 		</script>
     </body>

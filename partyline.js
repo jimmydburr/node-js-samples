@@ -17,14 +17,21 @@ function handler (req, res) {
 }
 // create a websocket
 io.sockets.on('connection', function(socket) {
-		socket.emit('chat', {Chatting: 'on the partyline'});
-		socket.on('set nickname', function(nickname){
-			socket.set('nickname', nickname, function (){
-				var connected_msg = nickname + ' is now connected.';
-				console.log(connected_msg);
-				io.sockets.volatile.emit('broadcast_msg', connected_msg);
-			});
+	socket.emit('chat', {Chatting: 'on the partyline'});
+	socket.on('set nickname', function(nickname){
+		socket.set('nickname', nickname, function (){
+			var connected_msg = nickname + ' is now connected.';
+			console.log(connected_msg);
+			io.sockets.volatile.emit('broadcast_msg', connected_msg);
 		});
+	});
+	socket.on('emit_msg', function(msg) {
+		// Get the variable nickname
+		socket.get('nickname', function(err, nickname) {
+			console.log('Chat msg by ', nickname);
+			io.sockets.volatile.emit('broadcast_msg', nickname + ': ' + msg);
+		});
+	});
 });
 
 
