@@ -63,12 +63,12 @@
 	  data.addColumn('string', 'Label');
 	  data.addColumn('number', 'Value');
 	  data.addRows(3);
-	  data.setValue(0, 0, 'Memory');
-	  data.setValue(0, 1, 80);
-	  data.setValue(1, 0, 'CPU');
-	  data.setValue(1, 1, 55);
-	  data.setValue(2, 0, 'Network');
-	  data.setValue(2, 1, 68);
+	  data.setValue(0, 0, 'CPU');
+	  data.setValue(0, 1, 0);
+	  data.setValue(1, 0, 'IDLE');
+	  data.setValue(1, 1, 0);
+	  data.setValue(2, 0, 'Memory');
+	  data.setValue(2, 1, 0);
 
 	  csi_timer.tick('data');
 
@@ -76,7 +76,7 @@
 
 	  csi_timer.tick('new');
 
-	  var options = {width: 600, height: 420, redFrom: 90, redTo: 100,
+	  var options = {width: 300, height: 210, redFrom: 90, redTo: 100,
 		  yellowFrom:75, yellowTo: 90, minorTicks: 5};
 	  chart.draw(data, options);
 
@@ -93,10 +93,11 @@
 	  socket.on('broadcast_msg', function(mydata) {
 	    console.log('Got broadcast_msg.', mydata);
 	    console.log(mydata.cpu);
+	    console.log(mydata.idle);
 	    console.log(mydata.memory);
-	    data.setValue(0, 1, Math.round(mydata.memory));
-	    data.setValue(1, 1, Math.round(mydata.cpu));
-	    data.setValue(2, 1, Math.round(mydata.cpu));
+	    data.setValue(0, 1, Math.round(mydata.cpu));
+	    data.setValue(1, 1, Math.round(mydata.idle));
+	    data.setValue(2, 1, Math.round(mydata.memory));
 	    chart.draw(data, options);
 	  //throw '';
 	  });

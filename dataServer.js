@@ -1,8 +1,10 @@
 var os=require('os');
+var updateInterval = 1000;	// in milliseconds
+var memtomegs = 1024 * 1024;	// convert bytes to megs
+var sleep = require('sleep');
 var myData = new Object;
-myData.cpu = os.cpus()[0].times.user;
-myData.memory = os.freemem();
-console.log(myData);
+//myData.cpu = os.cpus()[0].times.user;
+//myData.memory = os.freemem();
 //throw '';
 
 var app = require('http').createServer(handler),
@@ -25,15 +27,27 @@ function handler (req, res) {
 // create a websocket
 io.sockets.on('connection', function(socket) {
 	console.log('Got a connection.');
-	myData.cpu = os.cpus()[0].times.user/(1024*1024);
-	myData.memory = os.freemem()/(1024*1024*100);
+	var earliestIdle = os.cpus()[0].times.idle;
+	var start = Date.now();
+	console.log(earliestIdle);
+	sleep.usleep(updateInterval * 100);
+	var latestIdle = os.cpus()[0].times.idle;
+	console.log(latestIdle);
+	var end = Date.now();
+	myData.idle = Math.round((latestIdle - earliestIdle) / updateInterval * 100);
+	myData.cpu = 100 - myData.idle;
+	myData.memory = os.freemem() / memtomegs;
+	// ok kick things off in the browser
 	socket.emit('broadcast_msg', myData);
 
 	setInterval(function() {
-		myData.cpu = os.cpus()[0].times.user/(1024*1024);
-		myData.memory = os.freemem()/(1024*1024*100);
+		earliestIdle = latestIdle;
+		latestIdle = os.cpus()[0].times.idle;
+		myData.idle = Math.round((latestIdle - earliestIdle) / updateInterval * 100);
+		myData.cpu = 100 - myData.idle;
+		myData.memory = os.freemem() / memtomegs;
 		io.sockets.volatile.emit('broadcast_msg', myData);
-	}, 1000);
+	}, updateInterval);
 
 });
 
