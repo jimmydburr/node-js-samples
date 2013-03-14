@@ -1,6 +1,6 @@
 var os=require('os');
 var updateInterval = 1000;	// in milliseconds
-var memtomegs = 1024 * 1024;	// convert bytes to megs
+var memToGB = 1024 * 1024 * 1024;	// convert bytes to gigs
 var sleep = require('sleep');
 var myData = new Object;
 //myData.cpu = os.cpus()[0].times.user;
@@ -36,7 +36,7 @@ io.sockets.on('connection', function(socket) {
 	var end = Date.now();
 	myData.idle = Math.round((latestIdle - earliestIdle) / updateInterval * 100);
 	myData.cpu = 100 - myData.idle;
-	myData.memory = os.freemem() / memtomegs;
+	myData.memory = Math.round(os.freemem() / memToGB);
 	// ok kick things off in the browser
 	socket.emit('broadcast_msg', myData);
 
@@ -45,7 +45,7 @@ io.sockets.on('connection', function(socket) {
 		latestIdle = os.cpus()[0].times.idle;
 		myData.idle = Math.round((latestIdle - earliestIdle) / updateInterval * 100);
 		myData.cpu = 100 - myData.idle;
-		myData.memory = os.freemem() / memtomegs;
+		myData.memory = Math.round(os.freemem() / memToGB);
 		io.sockets.volatile.emit('broadcast_msg', myData);
 	}, updateInterval);
 
