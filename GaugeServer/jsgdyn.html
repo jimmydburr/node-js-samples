@@ -51,6 +51,15 @@
 
 	<script type="text/javascript">
 
+	  var socket = io.connect('http://localhost:8080');
+	  socket.on('setup_msg', function(setup_obj) {
+	    console.log('setup_obj', setup_obj);
+	    var p = document.createElement("p");
+	    var ptext = document.createTextNode(JSON.stringify(setup_obj));
+	    p.appendChild(ptext);
+	    document.body.appendChild(p);
+	  });
+
 	var csi_timer = new window.jstiming.Timer();
 	csi_timer.name = 'docs_gauge';
 
@@ -76,19 +85,14 @@
 
 	  csi_timer.tick('new');
 
-	  var options = {width: 600, height: 210, redFrom: 90, redTo: 100,
-		  yellowFrom:75, yellowTo: 90, minorTicks: 5};
+	  var options = {width: 450, height: 210, redFrom: 90, redTo: 100,
+					yellowFrom:75, yellowTo: 90, minorTicks: 5};
 	  chart.draw(data, options);
 
 	  csi_timer.tick('draw');
 	  window.jstiming.report(csi_timer);
 
-	  data.setValue(0, 1, 0);
-	  data.setValue(1, 1, 0);
-	  data.setValue(2, 1, 0);
 	  chart.draw(data, options);
-
-	  var socket = io.connect('http://10.48.100.4:8080');
 
 	  socket.on('broadcast_msg', function(mydata) {
 	    console.log('Got broadcast_msg.', mydata);
@@ -102,8 +106,6 @@
 	  //throw '';
 	  });
 	}
-	</script>
-	<script>
 	</script>
   </body>
 </html>
